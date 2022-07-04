@@ -9,6 +9,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import NotFoundScreen from "./NotFoundScreen";
 
 const PinScreen = () => {
   // const pin = pins[3];
@@ -28,7 +29,7 @@ const PinScreen = () => {
   };
 
   if (!pin) {
-    return <Text>Pin not found</Text>
+    return <NotFoundScreen />
   }
 
   useEffect(() => {
