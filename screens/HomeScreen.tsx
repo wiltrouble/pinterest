@@ -1,6 +1,7 @@
 import MasonryList from "../components/MasonryList";
 import { useEffect, useState } from "react";
 import { useNhostClient } from "@nhost/react";
+import { Alert } from "react-native";
 
 export default function HomeScreen(){
 
@@ -13,8 +14,8 @@ export default function HomeScreen(){
         pins {
           created_at
           id
-          Image
-          Title
+          image
+          title
           user_id
         }
       }

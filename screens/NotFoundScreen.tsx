@@ -7,6 +7,7 @@ import {Ionicons} from '@expo/vector-icons'
 
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
+import React from 'react';
 
 export default function NotFoundScreen() {
 
