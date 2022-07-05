@@ -1,19 +1,30 @@
-import { StyleSheet, Image, ScrollView } from "react-native";
+import { StyleSheet, Image, ScrollView, Pressable } from "react-native";
 
 import MasonryList from "../components/MasonryList";
 import { Text, View } from "../components/Themed";
 
 import pins from "../assets/data/pins";
 import { Entypo, Feather } from "@expo/vector-icons";
+import React from "react";
+import { useSignOut } from "@nhost/react";
 
 export default function ProfileScreen() {
+
+  const {signOut} = useSignOut();
   return (
     <ScrollView style={styles.container}>
       <View style={styles.profileContainer}>
         <View style={styles.icons}>
           {/* <Feather name="share" size={24} color="black" style={styles.icon}/> */}
-          <Feather name="share" size={24} color="black" />
-          <Entypo name="dots-three-horizontal" size={24} color="black" style={styles.icon}/>
+          <Pressable onPress={signOut}>
+            <Feather name="share" size={24} color="black" />
+          </Pressable>
+          <Entypo
+            name="dots-three-horizontal"
+            size={24}
+            color="black"
+            style={styles.icon}
+          />
         </View>
         <Image
           source={{
@@ -54,11 +65,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   icons: {
-    flexDirection: 'row',
-    alignSelf: 'flex-end',
+    flexDirection: "row",
+    alignSelf: "flex-end",
     padding: 10,
   },
   icon: {
     paddingHorizontal: 10,
-  }
+  },
 });
