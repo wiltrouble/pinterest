@@ -26,7 +26,7 @@ mutation MyMutation ($image: String!, $title: String){
 }`;
 
 export default function CreatePinScreen() {
-  const [image, setImage] = useState(null);
+  const [imageUri, setImageUri] = useState<null | string>(null);
   const [title, setTitle] = useState("");
 
   const nhost = useNhostClient();
@@ -43,15 +43,47 @@ export default function CreatePinScreen() {
     console.log(result);
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImageUri(result.uri);
     }
   };
 
+  const uploadFile = async () => {
+    if (!imageUri) {
+      return {
+        error: {
+          message: "No image selected"
+        }
+      }
+    }
+
+    const parts = imageUri.split('/')
+    const name = parts[parts.length - 1]
+
+    const nameParts = name.split('.')
+    const extension = nameParts[nameParts.length - 1]
+
+    const uri = Platform.OS === "ios" ? imageUri?.replace("file://", "") : imageUri;
+
+    const result = await nhost.storage.upload({
+      file: {
+        name,
+        type: `image/${extension}`,
+        uri,
+      }, bucketId: 'default'
+    })
+    return result
+  }
+
   const onSubmit = async () => {
     // TODO upload image to the storage
+    const uploadResult = await uploadFile()
+    if (uploadResult.error) {
+      Alert.alert("Error uploading the image", uploadResult.error.message )
+      return;
+    }
     const result = await nhost.graphql.request(CREATE_PIN_MUTATION, {
       title,
-      image: "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/pinterest/9.jpeg"
+      image: uploadResult.fileMetadata.id,
     })
     console.log(result);
     if (result.error) {
@@ -65,9 +97,9 @@ export default function CreatePinScreen() {
   return (
     <View style={styles.root}>
       <Button title="Upload your Pin" onPress={pickImage} />
-      {image && (
+      {imageUri && (
         <>
-          <Image source={{ uri: image }} style={styles.image} />
+          <Image source={{ uri: imageUri }} style={styles.image} />
           <TextInput
             placeholder="Title..."
             style={styles.input}

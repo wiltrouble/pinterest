@@ -3,19 +3,37 @@ import { useState, useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { useNhostClient } from "@nhost/react";
 
 const Pin = (props) => {
   const { id, image, title } = props.pin;
+
+  const [imageUrl, setImageUrl] = useState("")
 
   const [ratio, setRatio] = useState(1);
 
   const navigation = useNavigation();
 
+  const nhost = useNhostClient()
+
+  const fetchImage = async () => {
+    const result = await nhost.storage.getPresignedUrl({
+      fileId: image
+    })
+    setImageUrl(result.presignedUrl?.url)
+    console.log(result);
+  }
+
   useEffect(() => {
-    if (image) {
-      Image.getSize(image, (width, height) => setRatio(width / height));
+    fetchImage()
+  }, [image])
+  
+
+  useEffect(() => {
+    if (imageUrl) {
+      Image.getSize(imageUrl, (width, height) => setRatio(width / height));
     }
-  }, [image]);
+  }, [imageUrl]);
 
   const onLike = () => {
     console.warn("pressed");
@@ -30,7 +48,7 @@ const Pin = (props) => {
       <View>
         <Image
           source={{
-            uri: image,
+            uri: imageUrl,
           }}
           style={[styles.image, { aspectRatio: ratio }]}
         />
