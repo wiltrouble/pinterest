@@ -10,12 +10,10 @@ import { StatusBar } from "expo-status-bar";
 import NotFoundScreen from "./NotFoundScreen";
 import React from "react";
 import { useNhostClient } from "@nhost/react";
+import RemoteImage from "../components/RemoteImage";
 
 const PinScreen = () => {
-  // const pin = pins[3];
-
-  const [ratio, setRatio] = useState(1);
-  const [pin, setPin] = useState<any>(null)
+  const [pin, setPin] = useState<any>(null);
   const nhost = useNhostClient();
   const navigation = useNavigation();
   const route = useRoute();
@@ -23,10 +21,10 @@ const PinScreen = () => {
   const insets = useSafeAreaInsets();
 
   const pinId = route.params?.id;
-  
 
   const fetchPin = async (pinId) => {
-    const response = await nhost.graphql.request(`
+    const response = await nhost.graphql.request(
+      `
     query MyQuery ($id: uuid!){
       pins_by_pk(id: $id) {
         id
@@ -40,11 +38,13 @@ const PinScreen = () => {
         displayName
       }
     }
-    `, {id: pinId});
+    `,
+      { id: pinId }
+    );
     if (response.error) {
-      Alert.alert("Error fetching the pin")
+      Alert.alert("Error fetching the pin");
     } else {
-      setPin(response.data.pins_by_pk)
+      setPin(response.data.pins_by_pk);
     }
   };
 
@@ -52,31 +52,19 @@ const PinScreen = () => {
     navigation.goBack();
   };
 
-  
   useEffect(() => {
-    fetchPin(pinId)
-  }, [pinId])
-  
-
-  useEffect(() => {
-    if (pin?.image) {
-      Image.getSize(pin.image, (width, height) => setRatio(width / height));
-    }
-  }, [pin]);
+    fetchPin(pinId);
+  }, [pinId]);
 
   if (!pin) {
     return <NotFoundScreen />;
   }
 
-
   return (
     <SafeAreaView style={{ backgroundColor: "black" }}>
       <StatusBar style="light" />
       <View style={styles.root}>
-        <Image
-          source={{ uri: pin.image }}
-          style={[styles.image, { aspectRatio: ratio }]}
-        />
+        <RemoteImage fileId={pin.image}/>
         <Text style={styles.title}>{pin.title}</Text>
       </View>
       <Pressable
@@ -95,12 +83,6 @@ const styles = StyleSheet.create({
   root: {
     height: "100%",
     backgroundColor: "white",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  image: {
-    width: "100%",
-
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },

@@ -7,8 +7,10 @@ export default function HomeScreen(){
 
   const nhost = useNhostClient();
   const [pins, setPins] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const fetchPins = async () => {
+    setLoading(true)
     const response = await nhost.graphql.request(`
       query MyQuery {
         pins {
@@ -24,10 +26,8 @@ export default function HomeScreen(){
       Alert.alert("Error fetchin pins ")
     } else {
       setPins(response.data.pins)
-      console.log(pins);
-      
     }
-    
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -36,6 +36,6 @@ export default function HomeScreen(){
   
 
   return (
-    <MasonryList pins={pins}/>
+    <MasonryList pins={pins} onRefresh={fetchPins} refreshing={loading}/>
   );
 }
