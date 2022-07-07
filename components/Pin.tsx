@@ -21,7 +21,6 @@ const Pin = (props) => {
       fileId: image
     })
     setImageUrl(result.presignedUrl?.url)
-    console.log(result);
   }
 
   useEffect(() => {

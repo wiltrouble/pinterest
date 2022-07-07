@@ -85,7 +85,6 @@ export default function CreatePinScreen() {
       title,
       image: uploadResult.fileMetadata.id,
     })
-    console.log(result);
     if (result.error) {
       Alert.alert("Error creating the post", result.error)
     } else {

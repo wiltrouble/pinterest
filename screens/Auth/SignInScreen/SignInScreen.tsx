@@ -31,8 +31,6 @@ const SignInScreen = () => {
     if (result.error) {
       Alert.alert("Error", result.error.message)
     }
-
-    console.log(result);
     
     // validate user
     // navigation.navigate('Home');
